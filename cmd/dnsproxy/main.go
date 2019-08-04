@@ -13,7 +13,6 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/miekg/dns"
 	"github.com/vizee/dnsproxy"
 )
 
@@ -23,7 +22,7 @@ var (
 
 func loadResolvConf(conf string, first bool) {
 	log.Printf("loading resolv: %s", conf)
-	cfg, err := dns.ClientConfigFromFile(conf)
+	err := dnsproxy.LoadResolvConf(conf)
 	if err != nil {
 		if first {
 			log.Fatalf("load resolv: %v", err)
@@ -31,11 +30,6 @@ func loadResolvConf(conf string, first bool) {
 			log.Printf("load resolv: %v", err)
 		}
 	}
-	rc := &dnsproxy.ResolvConfig{}
-	for _, addr := range cfg.Servers {
-		rc.Servers = append(rc.Servers, net.JoinHostPort(addr, cfg.Port))
-	}
-	dnsproxy.SetResolvConf(rc)
 }
 
 func parseProxyConf(conf string) (*dnsproxy.ProxyConfig, error) {
@@ -99,13 +93,6 @@ func loadProxyConf(conf string, first bool) {
 		}
 	}
 	dnsproxy.SetProxyConf(pc)
-}
-
-func unfqdn(s string) string {
-	if dns.IsFqdn(s) {
-		return s[:len(s)-1]
-	}
-	return s
 }
 
 func main() {

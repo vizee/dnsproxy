@@ -44,6 +44,19 @@ var (
 	}
 )
 
+func LoadResolvConf(conf string) error {
+	cfg, err := dns.ClientConfigFromFile(conf)
+	if err != nil {
+		return err
+	}
+	rc := &ResolvConfig{}
+	for _, addr := range cfg.Servers {
+		rc.Servers = append(rc.Servers, net.JoinHostPort(addr, cfg.Port))
+	}
+	SetResolvConf(rc)
+	return nil
+}
+
 func SetResolvConf(rc *ResolvConfig) {
 	resolvconf.Store(rc)
 }
