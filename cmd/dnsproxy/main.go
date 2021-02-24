@@ -109,6 +109,8 @@ func main() {
 	flag.BoolVar(&verbose, "V", false, "verbose")
 	flag.Parse()
 
+	dnsproxy.Debug = verbose
+
 	if resolv != "" {
 		loadResolvConf(resolv, true)
 	}

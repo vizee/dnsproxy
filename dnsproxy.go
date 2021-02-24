@@ -98,7 +98,7 @@ func resolve(c *dns.Client, w dns.ResponseWriter, r *dns.Msg) {
 				w.WriteMsg(msg)
 
 				if Debug {
-					fmt.Println("hijack dns: %s", q.Name)
+					fmt.Printf("hijack dns: %s\n", q.Name)
 				}
 				return
 			}
@@ -106,7 +106,7 @@ func resolve(c *dns.Client, w dns.ResponseWriter, r *dns.Msg) {
 	}
 
 	if Debug {
-		fmt.Println("resolve dns: %s", q.Name)
+		fmt.Printf("resolve dns: %s\n", q.Name)
 	}
 
 	rc := resolvconf.Load().(*ResolvConfig)
