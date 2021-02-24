@@ -1,6 +1,7 @@
 package dnsproxy
 
 import (
+	"fmt"
 	"net"
 	"regexp"
 	"sync"
@@ -37,6 +38,8 @@ var (
 	}
 	resolvconf atomic.Value
 	proxyconf  atomic.Value
+
+	Debug bool
 
 	servers struct {
 		mu   sync.Mutex
@@ -93,10 +96,19 @@ func resolve(c *dns.Client, w dns.ResponseWriter, r *dns.Msg) {
 					})
 				}
 				w.WriteMsg(msg)
+
+				if Debug {
+					fmt.Println("hijack dns: %s", q.Name)
+				}
 				return
 			}
 		}
 	}
+
+	if Debug {
+		fmt.Println("resolve dns: %s", q.Name)
+	}
+
 	rc := resolvconf.Load().(*ResolvConfig)
 	deadline := time.Now().Add(time.Second * 2)
 	for _, addr := range rc.Servers {
